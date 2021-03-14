@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.get('/', (_req, res) => {
-  res.json('express-starter api');
+  res.json('simple chat server');
 });
 
 const PORT = process.env.PORT || 3000;
