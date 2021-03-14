@@ -1,23 +1,23 @@
-import express from 'express';
-import http from 'http';
-import { Server } from 'socket.io';
-import morgan from 'morgan';
+const express = require('express');
+const cors = require('cors');
+const morgan = require('morgan');
 
+const PORT = process.env.PORT || 3000;
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
 
 app.use(express.json());
+app.use(cors());
 app.use(morgan('dev'));
 
 app.get('/', (_req, res) => {
   res.json('simple chat server');
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`server is runniing on port ${PORT}`);
 });
+
+const io = require('socket.io')(server);
 
 io.on('connection', socket => {
   console.log('connected client');
@@ -36,7 +36,7 @@ io.on('connection', socket => {
   socket.on('schat', data => {
     const resMsg = `${client.name || 'unknown'}: ${data}`;
     console.log(resMsg);
-    io.to(client.room).broadcast.emit('rchat', resMsg);
+    io.to(client.room).emit('rchat', resMsg);
   });
 
   socket.on('forceDisconnect', () => {
@@ -46,9 +46,6 @@ io.on('connection', socket => {
 
   socket.on('disconnect', () => {
     console.log(`${client.name || 'unknown'} disconnected`);
-    io.to(client.room).broadcast.emit(
-      'rchat',
-      `logout(${client.name}, ${client.room})`,
-    );
+    io.to(client.room).emit('rchat', `logout(${client.name}, ${client.room})`);
   });
 });
