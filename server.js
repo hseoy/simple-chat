@@ -14,7 +14,7 @@ app.get('/', (_req, res) => {
   res.json('express-starter api');
 });
 
-const { PORT } = process.env;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`server is runniing on port ${PORT}`);
 });

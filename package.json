@@ -5,8 +5,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "PORT=4000 node server.js",
-    "start:dev": "PORT=4000 nodemon server.js",
+    "start": "node server.js",
+    "start:dev": "nodemon server.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
