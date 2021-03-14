@@ -20,6 +20,7 @@ server.listen(PORT, () => {
 });
 
 io.on('connection', socket => {
+  console.log('connected client');
   const client = {};
 
   socket.on('login', data => {
@@ -29,18 +30,22 @@ io.on('connection', socket => {
     client.room = data.room;
 
     socket.join(data.room);
-    io.to(data.room).emit('rchat', `login -${data.name}`);
+    io.to(client.room).emit('rchat', `login -${client.name}`);
   });
 
   socket.on('schat', data => {
-    io.to(client.room).broadcast.emit('rchat', data);
+    const resMsg = `${client.name || 'unknown'}: ${data}`;
+    console.log(resMsg);
+    io.to(client.room).broadcast.emit('rchat', resMsg);
   });
 
   socket.on('forceDisconnect', () => {
+    console.log(`${client.name || 'unknown'} disconnected`);
     socket.disconnect();
   });
 
   socket.on('disconnect', () => {
+    console.log(`${client.name || 'unknown'} disconnected`);
     io.to(client.room).broadcast.emit(
       'rchat',
       `logout(${client.name}, ${client.room})`,
